@@ -1,9 +1,11 @@
 # Team 9
 # IS 303 - Section 003
 # Retail Sales Data
-# Description: This program reads retail sales data from an Excel file, processes it, and stores it in a PostgreSQL database. It allows users to view summaries of the data and generates visualizations based on user input.
+# Description: This program reads retail sales data from an Excel file, 
+# processes it, and stores it in a PostgreSQL database. 
+# It allows users to view summaries of the data and generates visualizations based on user input.
 
-import sqlalchemy
+from sqlalchemy import create_engine, text
 import pandas as pd
 import matplotlib.pyplot as plot
 
@@ -27,8 +29,45 @@ while True:
             del salesData["name"]
 
             #Part 1-3:
+            #create correct dictionary map 
+            productCategoriesDict = {
+            'Camera': 'Technology',
+            'Laptop': 'Technology',
+            'Gloves': 'Apparel',
+            'Smartphone': 'Technology',
+            'Watch': 'Accessories',
+            'Backpack': 'Accessories',
+            'Water Bottle': 'Household Items',
+            'T-shirt': 'Apparel',
+            'Notebook': 'Stationery',
+            'Sneakers': 'Apparel',
+            'Dress': 'Apparel',
+            'Scarf': 'Apparel',
+            'Pen': 'Stationery',
+            'Jeans': 'Apparel',
+            'Desk Lamp': 'Household Items',
+            'Umbrella': 'Accessories',
+            'Sunglasses': 'Accessories',
+            'Hat': 'Apparel',
+            'Headphones': 'Technology',
+            'Charger': 'Technology'}
+
+            #replace incorrect data in category column
+            salesData["category"] = salesData["product"].map(productCategoriesDict)
 
             #Part 1-4:
+            #create dataframe paramater variables
+            username = 'postgres'
+            password = 'admin'
+            host = 'localhost'
+            port = '5432'
+            database = 'is303postgres'
+            #create the connection string for the engine
+            engine = create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
+            #open connection to database
+            conn = engine.connect()
+            #write database to specific table
+            salesData.to_sql('sale', conn, if_exists='replace', index=True)
 
             #Part 1-5: Print success message.
             print("You\'ve imported the excel file into your postgres database.")
