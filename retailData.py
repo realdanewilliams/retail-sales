@@ -102,14 +102,31 @@ while True:
             selectedCategory = input("Please enter the number of the category you want to see summarized: ")
 
             #Part 2-4:
-            
-            #Part 2-5:
+            dftotalSales = pd.read_sql(text("SELECT * FROM sale"), conn)
+            categoryName = category_list[int(selectedCategory)-1]
+            dfFiltered = dftotalSales.query('category == @categoryName')
+                # This check if the filtered DataFrame is not empty 
+            if not dfFiltered.empty:
+                # This calculates the information
+                totalSales = dfFiltered['total_price'].sum()
+                averageSale = dfFiltered['total_price'].mean()
+                totalUnitsSold = dfFiltered['quantity_sold'].sum()
+
+                # Display the results
+                print(f"\nSummary of Category: {categoryName}")
+                print(f"Total Sales: ${totalSales:,.2f}")
+                print(f"Average Sale Amount: ${averageSale:,.2f}")
+                print(f"Total Units Sold: {totalUnitsSold}")
+            else:
+                print("Invalid category name or no data available for the selected category.")
+                
+            # Part 2-5:
             # Group by product and sum the total_price
             dfProductSales = dfFiltered.groupby('product')['total_price'].sum()
-                    
+                        
                     # Create the chart
             dfProductSales.plot(kind='bar')  # creates the chart
-            plot.title(f"Total Sales in {requestedCategory}")  # adds title to the top of the chart
+            plot.title(f"Total Sales in {categoryName}")  # adds title to the top of the chart
             plot.xlabel("Product")  # label for the x-axis
             plot.ylabel("Total Sales")  # label for the y-axis
             plot.show()  # makes the chart pop up on the screen
@@ -118,12 +135,10 @@ while True:
     except ValueError:
                 print("Please enter a valid number.")
             
-        #Exit the program if the user enters anything other than 1 or 2
-        else:
-            print("Closing the program.")
-            break
-    except ValueError:
-        print("Closing the program.")
-        break
-            
-
+        # Exit the program if the user enters anything other than 1 or 2
+#     else:
+#         print("Closing the program.")
+#         break
+# except ValueError:
+#     print("Closing the program.")
+#     break
