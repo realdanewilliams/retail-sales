@@ -76,7 +76,27 @@ while True:
             #Part 2-1: Print category message.
             print("The following are all the categories that have been sold:")
 
-            #Part 2-2:
+            #Part 2-2: Connect to database and display categories
+            username = 'postgres'
+            password = 'admin' # Replace with your actual password
+            host = 'localhost'
+            port = '5432'
+            database = 'is303postgres'
+            engine = create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
+            conn = engine.connect()
+            
+            # SQL query
+            query = "SELECT DISTINCT category FROM sale ORDER BY category"
+            # Dataframe
+            dfCategories = pd.read_sql( text(query), engine)
+            
+            category_list = dfCategories['category'].tolist()
+            
+            # Enumerate
+            for iCount, category in enumerate(category_list, start=1):
+                # Display the counter and the value for the category
+                print(f"{iCount}: {category}")
+            
     
             #Part 2-3: Ask the user for a category number.
             selectedCategory = input("Please enter the number of the category you want to see summarized: ")
